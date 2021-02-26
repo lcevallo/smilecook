@@ -104,18 +104,37 @@ class RecipeResource(Resource):
 
 
 class RecipePublishResource(Resource):
+    # decorator here says that the method can only be invoked after the user has logged in
+    @jwt_required
     def put(self, recipe_id):
-        recipe = next((recipe for recipe in recipe_list if recipe.id == recipe_id), None)
+        recipe = Recipe.get_by_id(recipe_id=recipe_id)
         if recipe is None:
             return {'message': 'recipe not found'}, HTTPStatus.NOT_FOUND
+        
+        current_user = get_jwt_identity()
+        
+        if current_user != recipe.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        
         recipe.is_publish = True
+
+        recipe.save()
 
         return {}, HTTPStatus.NO_CONTENT
 
+    # decorator here says that the method can only be invoked after the user has logged in
+    @jwt_required
     def delete(self, recipe_id):
-        recipe = next((recipe for recipe in recipe_list if recipe.id == recipe_id), None)
+        recipe = Recipe.get_by_id(recipe_id=recipe_id)
         if recipe is None:
             return {'message': 'recipe not found'}, HTTPStatus.NOT_FOUND
+        current_user = get_jwt_identity()
+        
+        if current_user != recipe.user_id:
+            return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
+        
         recipe.is_publish = False
+
+        recipe.save()
 
         return {}, HTTPStatus.NO_CONTENT
