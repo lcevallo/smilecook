@@ -9,7 +9,7 @@ class User(db.Model):
 
     email = db.Column(db.String(200), nullable=False, unique=True)
 
-    bio = db.Column(db.Text())
+    #bio = db.Column(db.Text())
 
     password = db.Column(db.String(200))
 
@@ -33,3 +33,7 @@ class User(db.Model):
         db.session.add(self)
 
         db.session.commit()
+
+    @classmethod
+    def get_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
