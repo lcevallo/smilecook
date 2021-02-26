@@ -39,6 +39,10 @@ class UserListResource(Resource):
 
         return data, HTTPStatus.CREATED
 
+
+class UserResource(Resource):
+    
+    # @jwt_optional This implies that the endpoint is accessible regardless of the procession of the token
     @jwt_optional
     def get(self, username):
         user = User.get_by_username(username=username)
