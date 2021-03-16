@@ -1,9 +1,13 @@
 from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
-from utils import hash_password
 from models.user import User
-from flask_jwt_extended import get_jwt_identity, jwt_optional,jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_optional, jwt_required
+from schemas.user import UserSchema
+
+user_schema = UserSchema()
+
+user_public_schema = UserSchema(exclude=('email',))
 
 
 class UserListResource(Resource):
@@ -11,37 +15,48 @@ class UserListResource(Resource):
     def post(self):
         json_data = request.get_json()
 
+        data, errors = user_schema.load(data=json_data)
+
+        if errors:
+            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
+
         username = json_data.get('username')
         email = json_data.get('email')
 
         non_hash_password = json_data.get('password')
 
-        if User.get_by_username(username):
+        if User.get_by_username(data.get('username')):
             return {'message': 'username already used'}, HTTPStatus.BAD_REQUEST
 
-        if User.get_by_email(email):
+        if User.get_by_email(data.get('email')):
             return {'message': 'email already used'}, HTTPStatus.BAD_REQUEST
 
-        password = hash_password(non_hash_password)
+        # password = hash_password(non_hash_password)
 
-        user = User(
-            username=username,
-            email=email,
-            password=password
-        )
+        # user = User(
+        #     username=username,
+        #     email=email,
+        #     password=password
+        # )
+
+        user = User(**data)
+
         user.save()
 
-        data = {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email
-        }
+        # data = {
+        #     'id': user.id,
+        #     'username': user.username,
+        #     'email': user.email
+        # }
+        # return data, HTTPStatus.CREATED
 
-        return data, HTTPStatus.CREATED
+        return user_schema.dump(user), HTTPStatus.CREATED
+
+
 
 
 class UserResource(Resource):
-    
+
     # @jwt_optional This implies that the endpoint is accessible regardless of the procession of the token
     @jwt_optional
     def get(self, username):
@@ -58,36 +73,40 @@ class UserResource(Resource):
 
         if current_user == user.id:
             # it is private information and is only visible to the authenticated user 
-            data = {
+            # data = {
 
-                'id': user.id,
+            #     'id': user.id,
 
-                'username': user.username,
+            #     'username': user.username,
 
-                'email': user.email,
+            #     'email': user.email,
 
-            }
+            # }
+            data = user_schema.dump(user)
         else:
-               
-            data = {
 
-                'id': user.id,
+            # data = {
 
-                'username': user.username,
+            #     'id': user.id,
 
-            }
+            #     'username': user.username,
+
+            # }
+            data = user_public_schema.dump(user)
 
         return data, HTTPStatus.OK
-    
+
+
 class MeResource(Resource):
-     # decorator here says that the method can only be invoked after the user has logged in
+    # decorator here says that the method can only be invoked after the user has logged in
     @jwt_required
     def get(self):
         user = User.get_by_id(id=get_jwt_identity())
-        data = {
+        # data = {
 
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-        }
-        return data, HTTPStatus.OK
+        #     'id': user.id,
+        #     'username': user.username,
+        #     'email': user.email,
+        # }
+        user = User.get_by_id(id=get_jwt_identity())
+        return user_schema.dump(user), HTTPStatus.OK
