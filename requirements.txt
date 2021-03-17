@@ -8,3 +8,4 @@ psycopg2-binary==2.8.6
 Flask-JWT-Extended==3.20.0
 PyJWT==1.7.1
 marshmallow==3.10.0
+webargs === 7.0.1

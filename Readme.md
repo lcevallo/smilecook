@@ -9,3 +9,9 @@ flask db migrate
 
 # which will upgrade our database to conform with the latest specification in our models
 flask db upgrade
+
+
+
+https://github.com/TrainingByPackt/Python-API-Development-Fundamentals
+
+pip install -r requirements.txt

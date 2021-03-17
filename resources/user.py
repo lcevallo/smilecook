@@ -3,11 +3,16 @@ from flask_restful import Resource
 from http import HTTPStatus
 from models.user import User
 from flask_jwt_extended import get_jwt_identity, jwt_optional, jwt_required
+
+from schemas.recipe import RecipeSchema
 from schemas.user import UserSchema
+from webargs import fields
+from webargs.flaskparser import use_kwargs
 
 user_schema = UserSchema()
 
 user_public_schema = UserSchema(exclude=('email',))
+recipe_list_schema = RecipeSchema(many=True)
 
 
 class UserListResource(Resource):
