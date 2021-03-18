@@ -1,6 +1,8 @@
 from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
+
+from models.recipe import Recipe
 from models.user import User
 from flask_jwt_extended import get_jwt_identity, jwt_optional, jwt_required
 
@@ -58,6 +60,25 @@ class UserListResource(Resource):
         return user_schema.dump(user), HTTPStatus.CREATED
 
 
+class UserRecipeListResource(Resource):
+    @jwt_optional
+    @use_kwargs({'visibility': fields.Str(missing='public')})
+    def get(self, username, visibility):
+        user = User.get_by_username(username=username)
+
+        if user is None:
+            return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+
+        current_user = get_jwt_identity()
+
+        if current_user == user.id and visibility in ['all', 'private']:
+            pass
+        else:
+            visibility = 'public'
+
+        recipes = Recipe.get_all_by_user(user_id=user.id, visibility=visibility)
+
+        return recipe_list_schema.dump(recipes), HTTPStatus.OK
 
 
 class UserResource(Resource):
