@@ -78,7 +78,9 @@ class RecipeResource(Resource):
         if recipe.is_publish == False and recipe.user_id != current_user:
             return {'message': 'Access is not allowed'}, HTTPStatus.FORBIDDEN
 
-        return recipe.data, HTTPStatus.OK
+        # return recipe.data, HTTPStatus.OK
+
+        return recipe_schema.dump(recipe), HTTPStatus.OK
 
     @jwt_required
     def patch(self, recipe_id):
@@ -141,6 +143,7 @@ class RecipeResource(Resource):
         recipe.save()
 
         return recipe.data, HTTPStatus.OK
+
 
     # decorator here says that the method can only be invoked after the user has logged in
     @jwt_required

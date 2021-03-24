@@ -23,7 +23,8 @@ class RecipeSchema(Schema):
     num_of_servings = fields.Integer(validate=validate_num_of_servings)
     cook_time = fields.Integer()
     
-    author = fields.Nested(UserSchema, attribute='user', dump_only=True, only=['id', 'username'])
+    # author = fields.Nested(UserSchema, attribute='user', dump_only=True, only=['id', 'username'])
+    author = fields.Nested(UserSchema, attribute='user', dump_only=True, exclude=('email',))
     
     @post_dump(pass_many=True)
     def wrap(self, data, many, **kwargs):
