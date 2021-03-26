@@ -15,6 +15,5 @@
         "titleBar.inactiveBackground": "#7209b799",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#7209b7",
-    "python.pythonPath": "h:\\smilecook\\venv\\Scripts\\python.exe"
+    "peacock.color": "#7209b7"
 }
