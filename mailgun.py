@@ -10,8 +10,8 @@ class MailgunApi:
         self.base_url = self.API_URL.format(self.domain)
 
     def send_email(self, to, subject, text, html=None):
-        #if not isinstance(to, (list, tuple)):
-         #   to = [to, ]
+        if not isinstance(to, (list, tuple)):
+           to = [to, ]
 
         data = {
             'from': 'SmileCook <no-reply@{}>'.format(self.domain),

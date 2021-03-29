@@ -5,8 +5,8 @@ from flask_restful import Api
 from config import Config
 from extensions import db, jwt
 
-from resources.token import TokenResource, RefreshResource,RevokeResource,black_list
-from resources.user import UserListResource, UserResource, MeResource, UserRecipeListResource
+from resources.token import TokenResource, RefreshResource, RevokeResource, black_list
+from resources.user import UserListResource, UserResource, MeResource, UserRecipeListResource, UserActivateResource
 from resources.recipe import RecipeListResource, RecipeResource, RecipePublishResource
 
 
@@ -20,11 +20,12 @@ def create_app():
 
 
 def register_extensions(app):
-    db.app = app # Esta linea me la hubieran dicho en el capitulo 3 cuando se empezo con SQLAlchemy
+    db.app = app  # Esta linea me la hubieran dicho en el capitulo 3 cuando se empezo con SQLAlchemy
     db.init_app(app)
     migrate = Migrate(app, db)
     jwt.init_app(app)
-    
+
+
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
@@ -43,7 +44,7 @@ def register_resources(app):
     api.add_resource(RecipeResource, '/recipes/<int:recipe_id>')
     api.add_resource(RecipePublishResource, '/recipes/<int:recipe_id>/publish')
     api.add_resource(MeResource, '/me')
-
+    api.add_resource(UserActivateResource, '/users/activate/<string:token>')
 
 
 if __name__ == '__main__':

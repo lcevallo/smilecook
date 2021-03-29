@@ -1,4 +1,5 @@
 class Config:
+    SECRET_KEY = 'fenix-hen-maken'
     DEBUG = True
     # SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://lcevallo:PoiZxc357@localhost:5432/smilecook'
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://lcevallo:PoiZxc357@localhost:5432/smilecook'
